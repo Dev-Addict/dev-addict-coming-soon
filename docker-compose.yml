@@ -1,0 +1,29 @@
+version: '3'
+services:
+  webhost:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: coming-soon-webhost
+    container_name: coming-soon
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - webhost
+    command: certonly --webroot --webroot-path=/var/www/html --email aria.azadi.pour@protonmail.com --agree-tos --no-eff-email --force-renewal -d ariaazadipour.com -d www.ariaazadipour.com
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:
